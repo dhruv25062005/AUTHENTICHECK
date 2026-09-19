@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: authenticheck-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: authenticheck
+      POSTGRES_PASSWORD: authenticheck
+      POSTGRES_DB: authenticheck
+    ports:
+      - "5432:5432"
+    volumes:
+      - authenticheck_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U authenticheck -d authenticheck"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: authenticheck-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - authenticheck_redisdata:/data
+
+volumes:
+  authenticheck_pgdata:
+  authenticheck_redisdata:
