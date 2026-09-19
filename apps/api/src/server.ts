@@ -1,4 +1,3 @@
-import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -27,11 +26,6 @@ app.get("/health", (_req, res) => {
 });
 
 app.get("/health/db", async (_req, res) => {
-  if (!pool) {
-    res.status(503).json({ status: "unconfigured", message: "DATABASE_URL is not configured" });
-    return;
-  }
-
   try {
     const result = await db.query("SELECT NOW() AS now");
     res.json({ status: "ok", databaseTime: result.rows[0].now });
