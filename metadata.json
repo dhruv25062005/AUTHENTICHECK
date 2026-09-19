@@ -1,0 +1,6 @@
+{
+  "name": "AuthentiCheck",
+  "description": "AI-powered product authentication and counterfeit risk detection",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

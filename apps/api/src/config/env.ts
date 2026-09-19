@@ -13,9 +13,9 @@ const schema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().positive().default(4000),
   WEB_ORIGIN: z.string().url().default("http://localhost:3000"),
-  DATABASE_URL: z.string().min(1),
-  JWT_ACCESS_SECRET: z.string().min(32),
-  JWT_REFRESH_SECRET: z.string().min(32)
+  DATABASE_URL: z.string().default("postgresql://postgres:postgres@localhost:5432/authenticheck"),
+  JWT_ACCESS_SECRET: z.string().default("authenticheck_dev_jwt_access_secret_32_characters_minimum_len"),
+  JWT_REFRESH_SECRET: z.string().default("authenticheck_dev_jwt_refresh_secret_32_characters_minimum_len")
 });
 
 export const env = schema.parse({
