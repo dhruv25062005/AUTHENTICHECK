@@ -1,0 +1,8 @@
+import{Router}from"express";import{db}from"../db.js";import{requireAuth,requireRole,type AuthenticatedRequest}from"../middleware/auth.js";import{generateSerial}from"../utils/serial.js";
+const router=Router();
+router.post("/:productId/batches/:batchId/generate",requireAuth,requireRole("MANUFACTURER"),async(req:AuthenticatedRequest,res)=>{
+ const quantity=Math.min(Number(req.body.quantity||1),1000);if(!Number.isInteger(quantity)||quantity<1){res.status(400).json({error:"quantity must be a positive integer"});return}
+ const client=await db.connect();try{await client.query("BEGIN");const own=await client.query(`SELECT pb.id FROM product_batches pb JOIN products p ON p.id=pb.product_id JOIN manufacturers m ON m.id=p.manufacturer_id WHERE pb.id=$1 AND p.id=$2 AND m.user_id=$3`,[req.params.batchId,req.params.productId,req.user!.id]);if(!own.rows[0]){await client.query("ROLLBACK");res.status(404).json({error:"Batch not found"});return}
+ const rows=[];for(let i=0;i<quantity;i++){for(let a=0;a<5;a++){const serial=generateSerial("AC");try{const r=await client.query(`INSERT INTO product_instances(product_id,batch_id,serial_number,verification_token_hash) VALUES($1,$2,$3,encode(digest(random()::text||clock_timestamp()::text,'sha256'),'hex')) RETURNING id,serial_number`,[req.params.productId,req.params.batchId,serial]);rows.push(r.rows[0]);break}catch(e){if((e as any).code!=="23505")throw e}}}await client.query("COMMIT");res.status(201).json({count:rows.length,instances:rows});}catch(e){await client.query("ROLLBACK");console.error(e);res.status(500).json({error:"Failed to generate instances"});}finally{client.release()}
+});
+export default router;
