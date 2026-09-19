@@ -6,7 +6,6 @@ import authRoutes from "./routes/auth.js";
 import meRoutes from "./routes/me.js";
 import { env } from "./config/env.js";
 import { db } from "./db.js";
-import { Pool } from "pg";
 
 const app = express();
 const port = env.PORT;
@@ -41,8 +40,13 @@ app.get("/health/db", async (_req, res) => {
   }
 });
 
+import productRoutes from "./routes/products.js";
+import verifyRoutes from "./routes/verify.js";
+
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/me", meRoutes);
+app.use("/api/v1/products", productRoutes);
+app.use("/api/v1/verify", verifyRoutes);
 
 app.get("/api/v1", (_req, res) => {
   res.json({
