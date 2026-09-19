@@ -1,24 +1,3 @@
-export default function Home() {
-  return (
-    <main className="page">
-      <section className="hero">
-        <div className="badge">AUTHENTICHECK • FOUNDATION</div>
-        <h1>Verify products.<br />Detect suspicious activity.</h1>
-        <p>
-          A multi-signal authentication platform combining secure product
-          identities, QR verification, computer vision, and fraud analytics.
-        </p>
-        <div className="actions">
-          <button>Scan QR Code</button>
-          <button className="secondary">Enter Serial Number</button>
-        </div>
-      </section>
-
-      <section className="cards">
-        <article><strong>Identity</strong><span>QR & serial verification</span></article>
-        <article><strong>Vision</strong><span>AI-assisted image analysis</span></article>
-        <article><strong>Behavior</strong><span>Duplicate & anomaly detection</span></article>
-      </section>
-    </main>
-  );
-}
+"use client";
+import{useState}from"react";import{useRouter}from"next/navigation";
+export default function Home(){const[serial,setSerial]=useState("");const router=useRouter();return <main className="page"><section className="hero"><div className="badge">AUTHENTICHECK • PRODUCT VERIFICATION</div><h1>Verify products.<br/>Detect suspicious activity.</h1><p>Check a registered product identity and receive a risk-oriented verification result.</p><div className="verifyBox"><input value={serial} onChange={e=>setSerial(e.target.value.toUpperCase())} placeholder="Enter product serial number"/><button onClick={()=>serial.trim()&&router.push(`/verify/${encodeURIComponent(serial.trim())}`)}>Verify</button></div><div className="cards"><article><strong>Identity</strong><span>QR & serial verification</span></article><article><strong>Behavior</strong><span>Scan history and anomaly detection</span></article><article><strong>AI Vision</strong><span>Visual analysis is added in the next stage</span></article></div></section></main>}
