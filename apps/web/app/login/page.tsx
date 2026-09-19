@@ -1,0 +1,5 @@
+"use client";
+import {useState} from "react";import{useRouter}from"next/navigation";
+export default function Login(){const[email,setEmail]=useState("");const[password,setPassword]=useState("");const[error,setError]=useState("");const router=useRouter();
+ async function submit(e:React.FormEvent){e.preventDefault();setError("");const r=await fetch("http://localhost:4000/api/v1/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});const d=await r.json();if(!r.ok){setError(d.error||"Login failed");return;}localStorage.setItem("authenti_token",d.accessToken);router.push(d.user.role==="MANUFACTURER"?"/dashboard":"/");}
+ return <main className="page"><section className="hero auth"><div className="badge">AUTHENTICHECK • LOGIN</div><h1>Welcome back.</h1><form onSubmit={submit}><input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required/><input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} required/><button>Sign in</button>{error&&<p>{error}</p>}</form></section></main>}
