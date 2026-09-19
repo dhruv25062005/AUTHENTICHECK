@@ -1,4 +1,13 @@
+import dotenv from "dotenv";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
 import { z } from "zod";
+
+// Always load the repository-level .env, regardless of whether the API is
+// started from the repository root or from apps/api.
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const repositoryRoot = resolve(currentDir, "../../../../");
+dotenv.config({ path: resolve(repositoryRoot, ".env") });
 
 const schema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
