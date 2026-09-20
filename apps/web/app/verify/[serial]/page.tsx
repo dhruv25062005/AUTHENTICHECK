@@ -204,7 +204,7 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
           storeLocation: reportLocation,
           reason: reportReason,
           severity: reportSeverity,
-          evidenceUrl: photoDataUrl || undefined
+          evidenceUrl: undefined
         })
       });
       const data = await res.json();
