@@ -119,7 +119,7 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
     const fetchVerification = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/v1/verify/${encodeURIComponent(serial)}`);
+        const res = await fetch(apiUrl(`/api/v1/verify/${encodeURIComponent(serial)}`));
         const data = await res.json();
         setResult(data);
       } catch (err) {
@@ -155,7 +155,7 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
     setVisualAnalysisRunning(true);
     setVisualError("");
     try {
-      const res = await fetch("/api/v1/ai/inspect", {
+      const res = await fetch(apiUrl("/api/v1/ai/inspect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -194,7 +194,7 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
     e.preventDefault();
     setSubmittingReport(true);
     try {
-      const res = await fetch("/api/v1/reports", {
+      const res = await fetch(apiUrl("/api/v1/reports"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
