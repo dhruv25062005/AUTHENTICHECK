@@ -19,7 +19,7 @@ app.get("/health", (_req, res) => {
   res.json({
     service: "authenticheck-api",
     status: "ok",
-    version: "0.1.0",
+    version: "0.2.0",
     databaseConfigured: true,
     timestamp: new Date().toISOString()
   });
@@ -37,12 +37,18 @@ app.get("/health/db", async (_req, res) => {
 import productRoutes from "./routes/products.js";
 import verifyRoutes from "./routes/verify.js";
 import qrRoutes from "./routes/qr.js";
+import batchRoutes from "./routes/batches.js";
+import reportRoutes from "./routes/reports.js";
+import analyticsRoutes from "./routes/analytics.js";
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/me", meRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/verify", verifyRoutes);
 app.use("/api/v1/qr", qrRoutes);
+app.use("/api/v1/batches", batchRoutes);
+app.use("/api/v1/reports", reportRoutes);
+app.use("/api/v1/analytics", analyticsRoutes);
 
 app.get("/api/v1", (_req, res) => {
   res.json({
