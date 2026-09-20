@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ShieldCheck, Layers, LogIn, UserPlus, LogOut, Search, Store, User } from "lucide-react";
+import { ShieldCheck, Layers, LogIn, UserPlus, LogOut, Search } from "lucide-react";
 import { useAuth } from "../firebase/AuthContext";
 
 export default function Navbar() {
@@ -56,15 +56,6 @@ export default function Navbar() {
           >
             <Search className="w-4 h-4" />
             <span>Verify Serial</span>
-          </Link>
-
-          <Link
-            href="/merchants"
-            className={`nav-link ${pathname.startsWith("/merchants") ? "active" : ""}`}
-            id="nav-merchants"
-          >
-            <Store className="w-4 h-4" />
-            <span>Authorized Sellers</span>
           </Link>
 
           <Link
