@@ -48,9 +48,9 @@ router.get("/:serial", async (req, res) => {
 
     if (!product.rows[0]) {
       await client.query(
-        `INSERT INTO scans (serial_entered, scan_method, status, risk_score, ip_address, user_agent)
+        `INSERT INTO scans (serial_entered, scan_method, status, risk_score)
          VALUES ($1, 'QR'::text, 'HIGH_RISK', 100, $2, $3)`,
-        [serial, getClientIp(req), req.headers["user-agent"] ?? null]
+        [serial]
       );
       await client.query("COMMIT");
       res.status(404).json({
@@ -121,10 +121,10 @@ router.get("/:serial", async (req, res) => {
     const scanMethod = qrToken ? "QR" : "SERIAL";
     const scan = await client.query(
       `INSERT INTO scans
-       (product_instance_id, serial_entered, scan_method, status, risk_score, ip_address, user_agent)
-       VALUES ($1, $2, $3, $4::verification_status, $5, $6, $7)
+       (product_instance_id, serial_entered, scan_method, status, risk_score)
+       VALUES ($1, $2, $3, $4::verification_status, $5)
        RETURNING id, created_at`,
-      [item.instance_id, serial, scanMethod, risk.label, risk.score, getClientIp(req), req.headers["user-agent"] ?? null]
+      [item.instance_id, serial, scanMethod, risk.label, risk.score]
     );
 
     await client.query(
