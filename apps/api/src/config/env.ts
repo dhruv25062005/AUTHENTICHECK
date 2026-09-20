@@ -13,22 +13,16 @@ const schema = z.object({
   WEB_ORIGIN: z.string().url().default("http://localhost:3000"),
   DATABASE_URL: z.string().min(1),
   JWT_ACCESS_SECRET: z.string().min(32),
-  JWT_REFRESH_SECRET: z.string().min(32)
+  JWT_REFRESH_SECRET: z.string().min(32),
+  PUBLIC_VERIFY_URL: z.string().url().default("http://localhost:3000/verify")
 });
 
-const parsed = schema.safeParse({
+export const env = schema.parse({
   NODE_ENV: process.env.NODE_ENV,
   PORT: process.env.PORT,
   WEB_ORIGIN: process.env.WEB_ORIGIN,
   DATABASE_URL: process.env.DATABASE_URL,
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
-  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
+  PUBLIC_VERIFY_URL: process.env.PUBLIC_VERIFY_URL
 });
-
-if (!parsed.success) {
-  console.error("Invalid AuthentiCheck environment configuration.");
-  console.error(parsed.error.flatten().fieldErrors);
-  throw new Error("Invalid environment configuration");
-}
-
-export const env = parsed.data;
