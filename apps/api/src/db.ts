@@ -1,23 +1,13 @@
 import { Pool } from "pg";
 import { env } from "./config/env.js";
 
-let db: any;
-try {
-  db = new Pool({
-    connectionString: env.DATABASE_URL,
-    max: 10,
-    idleTimeoutMillis: 30_000,
-    connectionTimeoutMillis: 5_000
-  });
-} catch {
-  console.warn("DB not connected — mock active");
-  db = {
-    query: async () => ({ rows: [] }),
-    connect: async () => ({
-      query: async () => ({ rows: [] }),
-      release: () => {}
-    })
-  };
-}
+export const db = new Pool({
+  connectionString: env.DATABASE_URL,
+  max: 10,
+  idleTimeoutMillis: 30_000,
+  connectionTimeoutMillis: 5_000
+});
 
-export { db };
+db.on("error", (error) => {
+  console.error("Unexpected PostgreSQL pool error:", error);
+});
