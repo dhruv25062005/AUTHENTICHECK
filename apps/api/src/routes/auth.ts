@@ -20,6 +20,8 @@ const loginSchema = z.object({
   password: z.string().min(1).max(128)
 });
 
+const DUMMY_HASH = "$scrypt$dummy$not-a-real-password";
+
 router.post("/register", async (req, res) => {
   const parsed = registerSchema.safeParse(req.body);
   if (!parsed.success) {
