@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { users, createToken } from "../../../store";
+import { users, createToken, persistStore } from "../../../store";
 import { randomUUID } from "node:crypto";
 
 export async function POST(req: Request) {
@@ -27,6 +27,7 @@ export async function POST(req: Request) {
     };
 
     users.set(normalizedEmail, newUser);
+    persistStore();
 
     const authUser = {
       id: newUser.id,

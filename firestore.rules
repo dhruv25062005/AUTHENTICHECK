@@ -1,0 +1,94 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default-deny catch-all security net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Global Primitives
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // User Profile Validation
+    function isValidUser(data) {
+      return data.keys().hasAll(['userId', 'email', 'role']) &&
+        data.keys().hasOnly(['userId', 'email', 'displayName', 'role', 'organizationName', 'createdAt', 'updatedAt']) &&
+        data.userId is string && data.userId == request.auth.uid &&
+        data.email is string && data.email.size() <= 256 &&
+        data.role in ['MANUFACTURER', 'CONSUMER', 'AUDITOR'] &&
+        (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100)) &&
+        (!('organizationName' in data) || (data.organizationName is string && data.organizationName.size() <= 150)) &&
+        (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 64)) &&
+        (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    // Incident Report Validation
+    function isValidIncidentReport(data) {
+      return data.keys().hasAll(['id', 'serialNumber', 'reason', 'severity', 'createdAt']) &&
+        data.keys().hasOnly(['id', 'serialNumber', 'productName', 'reportedBy', 'merchantName', 'merchantLocation', 'storeLocation', 'reason', 'severity', 'status', 'evidenceUrl', 'createdAt']) &&
+        data.id is string && data.id.size() <= 128 &&
+        data.serialNumber is string && data.serialNumber.size() <= 64 &&
+        (!('productName' in data) || (data.productName is string && data.productName.size() <= 128)) &&
+        data.reason is string && data.reason.size() <= 1000 &&
+        data.severity in ['LOW', 'MEDIUM', 'CRITICAL'] &&
+        (!('merchantName' in data) || (data.merchantName is string && data.merchantName.size() <= 128)) &&
+        (!('merchantLocation' in data) || (data.merchantLocation is string && data.merchantLocation.size() <= 128)) &&
+        (!('storeLocation' in data) || (data.storeLocation is string && data.storeLocation.size() <= 128)) &&
+        (!('reportedBy' in data) || (data.reportedBy is string && data.reportedBy.size() <= 128)) &&
+        (!('status' in data) || data.status in ['PENDING', 'INVESTIGATING', 'RESOLVED']) &&
+        (!('evidenceUrl' in data) || (data.evidenceUrl is string && data.evidenceUrl.size() <= 1000000)) &&
+        data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    // Users Collection - Strict PII isolation & RBAC
+    match /users/{userId} {
+      allow get: if isValidId(userId) && isOwner(userId);
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isValidId(userId) &&
+        isOwner(userId) &&
+        isValidUser(incoming());
+      allow update: if isValidId(userId) &&
+        isOwner(userId) &&
+        isValidUser(incoming()) &&
+        incoming().userId == existing().userId &&
+        incoming().role == existing().role &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'organizationName', 'updatedAt']);
+      allow delete: if false;
+    }
+
+    // Incident Reports Collection - Append-only dispute dossiers
+    match /incidentReports/{reportId} {
+      allow get: if isValidId(reportId) &&
+        (!('reportedBy' in resource.data) || resource.data.reportedBy == null || (isSignedIn() && resource.data.reportedBy == request.auth.uid));
+      allow list: if isSignedIn() && resource.data.reportedBy == request.auth.uid;
+      allow create: if isValidId(reportId) && isValidIncidentReport(incoming());
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // Connectivity ping doc for SDK healthcheck
+    match /test/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

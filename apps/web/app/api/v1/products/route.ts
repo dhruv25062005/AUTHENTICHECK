@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { products, verifyToken } from "../../store";
+import { products, verifyToken, persistStore } from "../../store";
 import { randomUUID } from "node:crypto";
 
 export async function GET(req: Request) {
@@ -66,6 +66,7 @@ export async function POST(req: Request) {
     };
 
     products.set(newProduct.id, newProduct);
+    persistStore();
 
     return NextResponse.json(
       {
