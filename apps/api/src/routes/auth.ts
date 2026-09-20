@@ -113,4 +113,17 @@ router.post("/login", async (req, res) => {
   }
 });
 
+const forgotSchema = z.object({ email: z.string().email().transform(v => v.toLowerCase()) });
+
+router.post("/forgot-password", async (req, res) => {
+  const parsed = forgotSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "Invalid email address" });
+    return;
+  }
+  // Do not reveal whether an account exists. Email delivery can be connected
+  // to a provider later without changing the public API contract.
+  res.json({ message: "If an account exists for this email, recovery instructions will be sent." });
+});
+
 export default router;
