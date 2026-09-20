@@ -3,7 +3,6 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import PwaRegistrar from "./components/PwaRegistrar";
 import Holographic3DBackground from "./components/Holographic3DBackground";
-import { AuthProvider } from "./firebase/AuthContext";
 
 export const viewport: Viewport = {
   themeColor: "#060d17",
@@ -75,8 +74,7 @@ export default function RootLayout({
       <body className="antialiased">
         <PwaRegistrar />
         <Holographic3DBackground />
-        <AuthProvider>
-          <div className="app-container" id="app-root">
+            <div className="app-container" id="app-root">
             <Navbar />
             <div className="content-wrapper" id="page-content">
               {children}
@@ -88,8 +86,7 @@ export default function RootLayout({
               </div>
             </footer>
           </div>
-        </AuthProvider>
-      </body>
+        </body>
     </html>
   );
 }
