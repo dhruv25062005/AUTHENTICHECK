@@ -10,7 +10,7 @@ const createSchema = z.object({
   productId: z.string().uuid(),
   batchCode: z.string().trim().min(2).max(80),
   manufacturingDate: z.string().date().optional(),
-  quantity: z.number().int().min(1).max(100000),
+  quantity: z.number().int().min(1).max(5000),
   prefix: z.string().trim().regex(/^[A-Z0-9]{2,8}$/).default("AC")
 });
 
@@ -19,7 +19,7 @@ router.get("/", requireAuth, requireRole("MANUFACTURER"), async (req: Authentica
     const result = await db.query(
       `SELECT pb.id, pb.product_id AS "productId", pb.batch_code AS "batchCode",
               pb.manufacturing_date AS "manufacturingDate", pb.quantity, pb.created_at AS "createdAt",
-              COALESCE(array_agg(pi.serial_number) FILTER (WHERE pi.serial_number IS NOT NULL), '{}') AS "sampleSerials"
+              COALESCE((SELECT array_agg(s.serial_number) FROM (SELECT pi2.serial_number FROM product_instances pi2 WHERE pi2.batch_id = pb.id ORDER BY pi2.created_at LIMIT 20) s), '{}') AS "sampleSerials"
        FROM product_batches pb
        JOIN products p ON p.id = pb.product_id
        JOIN manufacturers m ON m.id = p.manufacturer_id
