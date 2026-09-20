@@ -26,7 +26,6 @@ import {
   RefreshCw,
   Eye
 } from "lucide-react";
-import { useAuth } from "../firebase/AuthContext";
 
 type Product = {
   id: string;
@@ -81,7 +80,6 @@ type AnalyticsData = {
 };
 
 export default function Dashboard() {
-  const { user, profile, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<"CATALOG" | "BATCHES" | "REPORTS" | "ANALYTICS">("CATALOG");
   const [products, setProducts] = useState<Product[]>([]);
   const [batches, setBatches] = useState<BatchItem[]>([]);
@@ -156,16 +154,11 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    const localToken = localStorage.getItem("authenti_token");
-    const activeToken = localToken || (user ? "firebase_auth_token_active" : "");
+    const activeToken = localStorage.getItem("authenti_token") || "";
     setToken(activeToken);
-
-    if (activeToken) {
-      fetchDashboardData(activeToken);
-    } else if (!authLoading) {
-      setLoading(false);
-    }
-  }, [user, authLoading]);
+    if (activeToken) fetchDashboardData(activeToken);
+    else setLoading(false);
+  }, []);
 
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
