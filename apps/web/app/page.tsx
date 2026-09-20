@@ -234,59 +234,10 @@ export default function Home() {
             </button>
           </form>
 
-          {/* Quick interactive test samples */}
           <div className="sample-chips-row" id="quick-samples">
-            <span className="chip-label">Quick Test Identities:</span>
-            <button
-              type="button"
-              className="sample-chip genuine"
-              id="chip-sample-genuine-1"
-              onClick={() => {
-                setSerial("AC-DEMO-001");
-                handleVerify("AC-DEMO-001");
-              }}
-            >
-              <CheckCircle2 className="w-3.5 h-3.5 inline mr-1" />
-              AC-DEMO-001 (Genuine)
-            </button>
-            <button
-              type="button"
-              className="sample-chip genuine"
-              id="chip-sample-genuine-2"
-              onClick={() => {
-                setSerial("AC-LUX-78291");
-                handleVerify("AC-LUX-78291");
-              }}
-            >
-              <CheckCircle2 className="w-3.5 h-3.5 inline mr-1" />
-              AC-LUX-78291 (Luxury Chronograph)
-            </button>
-            <button
-              type="button"
-              className="sample-chip suspicious"
-              id="chip-sample-suspicious"
-              onClick={() => {
-                setSerial("AC-SUS-44102");
-                handleVerify("AC-SUS-44102");
-              }}
-            >
-              <AlertTriangle className="w-3.5 h-3.5 inline mr-1" />
-              AC-SUS-44102 (High Velocity / Clone)
-            </button>
-            <button
-              type="button"
-              className="sample-chip counterfeit"
-              id="chip-sample-counterfeit"
-              onClick={() => {
-                setSerial("FAKE-SN-9999");
-                handleVerify("FAKE-SN-9999");
-              }}
-            >
-              <ShieldAlert className="w-3.5 h-3.5 inline mr-1" />
-              FAKE-SN-9999 (Unregistered)
-            </button>
+            <span className="chip-label">Enter a registered serial or scan a manufacturer-issued QR code.</span>
           </div>
-        </div>
+       </div>
 
         {/* Interactive 3D Showcase Stage Banner */}
         <div style={{ marginTop: "28px", marginBottom: "32px" }}>
@@ -308,7 +259,7 @@ export default function Home() {
               </div>
               <h2 className="feature-title">Cryptographic Serial Identity</h2>
               <p className="feature-desc">
-                Each genuine physical unit receives a cryptographically signed serial identifier and tamper-resistant QR certificate registered on the manufacturer ledger.
+                Each registered unit receives a unique serial identity and an opaque QR verification credential recorded by the manufacturer.
               </p>
             </article>
           </Interactive3DCard>
@@ -338,37 +289,11 @@ export default function Home() {
           </Interactive3DCard>
         </div>
 
-        {/* Live Security Stats Bar */}
-        <div
-          style={{
-            marginTop: "32px",
-            padding: "20px 24px",
-            background: "rgba(15, 23, 42, 0.6)",
-            borderRadius: "14px",
-            border: "1px solid var(--border-dim)",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-            gap: "20px",
-            textAlign: "center"
-          }}
-          id="stats-strip"
-        >
-          <div>
-            <div style={{ fontSize: "24px", fontWeight: "800", color: "#38bdf8" }}>99.98%</div>
-            <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>Cryptographic Match Rate</div>
-          </div>
-          <div>
-            <div style={{ fontSize: "24px", fontWeight: "800", color: "#34d399" }}>&lt; 180ms</div>
-            <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>Instant Verification Latency</div>
-          </div>
-          <div>
-            <div style={{ fontSize: "24px", fontWeight: "800", color: "#fbbf24" }}>Real-Time</div>
-            <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>Scan Velocity Heuristics</div>
-          </div>
-          <div>
-            <div style={{ fontSize: "24px", fontWeight: "800", color: "#a78bfa" }}>Gemini 3.8</div>
-            <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>AI Vision Packaging Audit</div>
-          </div>
+        <div style={{ marginTop:"32px", padding:"20px 24px", background:"rgba(15,23,42,.6)", borderRadius:"14px", border:"1px solid var(--border-dim)", display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:"20px", textAlign:"center" }}>
+          <div><div style={{fontSize:"20px",fontWeight:800,color:"#38bdf8"}}>Multi-signal</div><div style={{fontSize:"12px",color:"#94a3b8",marginTop:"4px"}}>Registry + behavior + visual evidence</div></div>
+          <div><div style={{fontSize:"20px",fontWeight:800,color:"#34d399"}}>Live</div><div style={{fontSize:"12px",color:"#94a3b8",marginTop:"4px"}}>Server-side verification</div></div>
+          <div><div style={{fontSize:"20px",fontWeight:800,color:"#fbbf24"}}>Risk-based</div><div style={{fontSize:"12px",color:"#94a3b8",marginTop:"4px"}}>Explainable risk signals</div></div>
+          <div><div style={{fontSize:"20px",fontWeight:800,color:"#a78bfa"}}>AI-assisted</div><div style={{fontSize:"12px",color:"#94a3b8",marginTop:"4px"}}>Visual inspection is supporting evidence</div></div>
         </div>
 
         {/* Consumer Protection Features: Authorized Sellers & Offline Mode */}
@@ -437,7 +362,7 @@ export default function Home() {
                 </h3>
               </div>
               <p style={{ fontSize: "13px", color: "#94a3b8", lineHeight: 1.6 }}>
-                Encountered a fake? Submit an incident report and instantly download a court-admissible chargeback evidence pack formatted for bank fraud & buyer protection claims.
+                Encountered a fake? Submit an incident report and instantly download a structured verification evidence report that summarizes AuthentiCheck signals for your records.
               </p>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "16px", fontSize: "12px", color: "#34d399" }}>
