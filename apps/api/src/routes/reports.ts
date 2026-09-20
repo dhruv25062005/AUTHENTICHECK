@@ -12,7 +12,7 @@ const reportSchema = z.object({
   storeLocation: z.string().trim().max(200).optional(),
   reason: z.string().trim().min(5).max(3000),
   severity: z.enum(["LOW", "MEDIUM", "CRITICAL"]).default("MEDIUM"),
-  evidenceUrl: z.string().max(200000).optional()
+  evidenceUrl: z.string().url().max(2048).optional()
 });
 
 router.get("/", requireAuth, async (req: AuthenticatedRequest, res) => {
