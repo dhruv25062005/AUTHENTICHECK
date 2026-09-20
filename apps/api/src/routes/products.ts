@@ -17,11 +17,11 @@ const productSchema = z.object({
 const batchSchema = z.object({
   batchCode: z.string().trim().min(2).max(80),
   manufacturingDate: z.string().date().optional(),
-  quantity: z.number().int().min(1).max(100000)
+  quantity: z.number().int().min(1).max(5000)
 });
 
 const instanceSchema = z.object({
-  quantity: z.number().int().min(1).max(1000),
+  quantity: z.number().int().min(1).max(5000),
   prefix: z.string().trim().regex(/^[A-Z0-9]{2,8}$/).default("AC")
 });
 
