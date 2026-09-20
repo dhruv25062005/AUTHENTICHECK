@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ShieldCheck, UserPlus, AlertCircle } from "lucide-react";
+import { apiUrl } from "../../lib/api";
 
 export default function Register() {
   const [name,setName]=useState(""); const [email,setEmail]=useState(""); const [password,setPassword]=useState("");
@@ -13,7 +14,7 @@ export default function Register() {
   async function submit(e:React.FormEvent){
     e.preventDefault(); setError(""); setLoading(true);
     try{
-      const res=await fetch("/api/v1/auth/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({fullName:name,email,password,role,organizationName:role==="MANUFACTURER"?org:undefined})});
+      const res=await fetch(apiUrl("/api/v1/auth/register"),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({fullName:name,email,password,role,organizationName:role==="MANUFACTURER"?org:undefined})});
       const data=await res.json();
       if(!res.ok) throw new Error(data.error||"Registration failed");
       localStorage.setItem("authenti_token",data.accessToken);
