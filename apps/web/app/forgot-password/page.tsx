@@ -3,14 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ShieldCheck, KeyRound, ArrowLeft, Mail, CheckCircle2, AlertCircle } from "lucide-react";
-import { useAuth } from "../firebase/AuthContext";
+import { apiUrl } from "../../lib/api";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { sendPasswordReset } = useAuth();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,7 +24,13 @@ export default function ForgotPassword() {
 
     setLoading(true);
     try {
-      await sendPasswordReset(cleanEmail);
+      const res = await fetch(apiUrl("/api/v1/auth/forgot-password"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: cleanEmail })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Unable to send password reset instructions.");
       setSuccess(true);
     } catch (err: unknown) {
       const fbErr = err as { code?: string; message?: string };
@@ -64,7 +69,7 @@ export default function ForgotPassword() {
             Reset Password
           </h1>
           <p style={{ color: "#94a3b8", fontSize: "14px", marginTop: "6px", lineHeight: "1.5" }}>
-            Enter your registered email and we&apos;ll dispatch a secure recovery link via Firebase Authentication.
+            Enter your registered email and we&apos;ll dispatch secure account recovery instructions.
           </p>
         </div>
 
