@@ -13,7 +13,7 @@ function getClientIp(req: { headers: Record<string, unknown>; ip?: string }) {
 
 router.get("/:serial", async (req, res) => {
   const serial = String(req.params.serial || "").trim().toUpperCase();
-  const qrToken = typeof req.query.token === "string" ? req.query.token.trim() : "";
+  const qrToken = typeof req.query.token === "string" ? req.query.token.trim() : "";\n\n  if (qrToken && (qrToken.length < 32 || qrToken.length > 200)) {\n    res.status(400).json({ error: "Invalid verification credential" });\n    return;\n  }
 
   if (!serial || serial.length > 100) {
     res.status(400).json({ error: "Invalid serial number" });
