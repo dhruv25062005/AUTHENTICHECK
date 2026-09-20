@@ -296,80 +296,10 @@ export default function Home() {
           <div><div style={{fontSize:"20px",fontWeight:800,color:"#a78bfa"}}>AI-assisted</div><div style={{fontSize:"12px",color:"#94a3b8",marginTop:"4px"}}>Visual inspection is supporting evidence</div></div>
         </div>
 
-        {/* Consumer Protection Features: Authorized Sellers & Offline Mode */}
-        <div
-          style={{
-            marginTop: "24px",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "16px"
-          }}
-          id="consumer-empowerment-cards"
-        >
-          <div
-            style={{
-              padding: "20px",
-              background: "rgba(12, 24, 40, 0.7)",
-              borderRadius: "12px",
-              border: "1px solid var(--border-dim)",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between"
-            }}
-          >
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-                <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: "rgba(56, 189, 248, 0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Store className="w-5 h-5 text-sky-400" />
-                </div>
-                <h3 style={{ fontSize: "16px", fontWeight: "700", color: "#f8fafc" }}>
-                  Authorized Seller Verification
-                </h3>
-              </div>
-              <p style={{ fontSize: "13px", color: "#94a3b8", lineHeight: 1.6 }}>
-                Before buying, search our live registry of verified retailers, licensed boutiques, and flagged gray-market URLs to avoid counterfeit distributors.
-              </p>
-            </div>
-            <Link
-              href="/merchants"
-              className="btn-secondary-action"
-              style={{ marginTop: "16px", width: "fit-content", fontSize: "13px" }}
-              id="link-explore-merchants"
-            >
-              <span>Explore Authorized Sellers</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          <div
-            style={{
-              padding: "20px",
-              background: "rgba(12, 24, 40, 0.7)",
-              borderRadius: "12px",
-              border: "1px solid var(--border-dim)",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between"
-            }}
-          >
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-                <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: "rgba(16, 185, 129, 0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <FileCheck className="w-5 h-5 text-emerald-400" />
-                </div>
-                <h3 style={{ fontSize: "16px", fontWeight: "700", color: "#f8fafc" }}>
-                  1-Click Dispute Dossier
-                </h3>
-              </div>
-              <p style={{ fontSize: "13px", color: "#94a3b8", lineHeight: 1.6 }}>
-                Encountered a fake? Submit an incident report and instantly download a structured verification evidence report that summarizes AuthentiCheck signals for your records.
-              </p>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "16px", fontSize: "12px", color: "#34d399" }}>
-              <Check className="w-4 h-4" />
-              <span>Built into every verification result</span>
-            </div>
-          </div>
+        {/* Consumer Protection Features */}
+        <div style={{ marginTop:"24px", padding:"20px 24px", background:"rgba(12,24,40,.7)", borderRadius:"12px", border:"1px solid var(--border-dim)" }}>
+          <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"8px"}}><FileCheck className="w-5 h-5 text-emerald-400"/><h3 style={{fontSize:"16px",fontWeight:700,color:"#f8fafc"}}>Evidence & incident reporting</h3></div>
+          <p style={{fontSize:"13px",color:"#94a3b8",lineHeight:1.6}}>Every verification can be followed by a structured incident report. AuthentiCheck treats AI output as supporting evidence rather than proof of authenticity.</p>
         </div>
 
         {/* Manufacturer banner */}
