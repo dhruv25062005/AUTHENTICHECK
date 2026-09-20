@@ -27,9 +27,6 @@ import {
   Radio
 } from "lucide-react";
 import { generateDisputeDossierPrintable } from "../../utils/disputeDossier";
-import { useAuth } from "../../firebase/AuthContext";
-import { db } from "../../firebase/config";
-import { doc, setDoc } from "firebase/firestore";
 import HologramBadge3D from "../../components/HologramBadge3D";
 import Product3DShowcase from "../../components/Product3DShowcase";
 import Interactive3DCard from "../../components/Interactive3DCard";
@@ -94,7 +91,6 @@ type AIInspectionResult = {
 };
 
 export default function VerifyPage({ params }: { params: Promise<{ serial: string }> }) {
-  const { user } = useAuth();
   const resolvedParams = use(params);
   const [serial, setSerial] = useState(decodeURIComponent(resolvedParams.serial || "").toUpperCase());
   const [result, setResult] = useState<Result | null>(null);
@@ -173,8 +169,19 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
         throw new Error("Inspection service returned error");
       }
 
-      const data: AIInspectionResult = await res.json();
-      setVisualResult(data);
+      const data = await res.json();
+      setVisualResult({
+        success: Boolean(data.success),
+        matchScore: typeof data.signals?.similarity === "number" ? Math.round(data.signals.similarity * 100) : 0,
+        riskTier: data.signals?.anomaly > 0.5 ? "HIGH_RISK" : "MODERATE_RISK",
+        hologramFoilStatus: data.message || "No hologram-specific model signal is available.",
+        typographyStatus: data.message || "No typography-specific model signal is available.",
+        sealIntegrity: data.message || "No seal-specific model signal is available.",
+        detectedAnomalies: data.signals?.anomaly != null ? [`Anomaly signal: ${data.signals.anomaly}`] : [],
+        forensicSummary: data.message || "Visual inspection response received.",
+        recommendation: data.signals?.anomaly > 0.5 ? "EXERCISE_CAUTION" : "EXERCISE_CAUTION",
+        analyzedBy: data.modelVersion || "AuthentiCheck AI Gateway"
+      });
     } catch (err) {
       console.error("AI inspection failed:", err);
       setVisualError("Packaging inspection could not complete. Please retry or check network.");
@@ -206,24 +213,7 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
         setReportRefId(assignedId);
         setReportSuccess(true);
 
-        // Synchronize with Cloud Firestore
-        try {
-          await setDoc(doc(db, "incidentReports", assignedId), {
-            id: assignedId,
-            serialNumber: serial,
-            productName: result?.product?.name || "Unknown Product",
-            reportedBy: user ? user.uid : null,
-            merchantName: reportMerchant.trim() || null,
-            storeLocation: reportLocation.trim() || null,
-            reason: reportReason.trim(),
-            severity: reportSeverity,
-            status: "PENDING",
-            evidenceUrl: photoDataUrl ? photoDataUrl.slice(0, 100000) : null,
-            createdAt: new Date().toISOString()
-          });
-        } catch (firestoreErr) {
-          console.warn("Could not sync incident report to Cloud Firestore:", firestoreErr);
-        }
+        // The Express API is the single source of truth for incident reports.
       }
     } catch (err) {
       console.error(err);
