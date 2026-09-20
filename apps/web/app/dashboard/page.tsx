@@ -120,7 +120,7 @@ export default function Dashboard() {
 
   const fetchDashboardData = (authToken: string) => {
     // Products
-    fetch("/api/v1/products", {
+    fetch(apiUrl("/api/v1/products"), {
       headers: { Authorization: `Bearer ${authToken}` }
     })
       .then((r) => r.json())
@@ -128,7 +128,7 @@ export default function Dashboard() {
       .catch((err) => console.error("Failed to load products:", err));
 
     // Batches
-    fetch("/api/v1/batches", {
+    fetch(apiUrl("/api/v1/batches"), {
       headers: { Authorization: `Bearer ${authToken}` }
     })
       .then((r) => r.json())
@@ -136,7 +136,7 @@ export default function Dashboard() {
       .catch((err) => console.error("Failed to load batches:", err));
 
     // Reports
-    fetch("/api/v1/reports", {
+    fetch(apiUrl("/api/v1/reports"), {
       headers: { Authorization: `Bearer ${authToken}` }
     })
       .then((r) => r.json())
@@ -144,7 +144,7 @@ export default function Dashboard() {
       .catch((err) => console.error("Failed to load reports:", err));
 
     // Analytics
-    fetch("/api/v1/analytics", {
+    fetch(apiUrl("/api/v1/analytics"), {
       headers: { Authorization: `Bearer ${authToken}` }
     })
       .then((r) => r.json())
@@ -165,7 +165,7 @@ export default function Dashboard() {
     if (!prodName || !prodBrand) return;
     setCreatingProduct(true);
     try {
-      const res = await fetch("/api/v1/products", {
+      const res = await fetch(apiUrl("/api/v1/products"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -197,7 +197,7 @@ export default function Dashboard() {
     if (!selectedProductId || !batchCode) return;
     setGeneratingBatch(true);
     try {
-      const res = await fetch("/api/v1/batches", {
+      const res = await fetch(apiUrl("/api/v1/batches"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -231,7 +231,7 @@ export default function Dashboard() {
     setActiveSerial(serial);
     setQrModal(true);
     try {
-      const res = await fetch(`/api/v1/qr/serial/${encodeURIComponent(serial)}`);
+      const res = await fetch(apiUrl(`/api/v1/qr/serial/${encodeURIComponent(serial)}`);
       const data = await res.json();
       setQrDataUrl(data.dataUrl);
       setQrVerificationUrl(data.verificationUrl);
