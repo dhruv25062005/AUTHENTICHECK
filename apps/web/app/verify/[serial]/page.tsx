@@ -697,18 +697,8 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
                       padding: "3px 10px",
                       borderRadius: "12px",
                       fontWeight: "700",
-                      background:
-                        visualResult.recommendation === "SAFE_TO_ACCEPT"
-                          ? "rgba(52, 211, 153, 0.15)"
-                          : visualResult.recommendation === "EXERCISE_CAUTION"
-                          ? "rgba(251, 191, 36, 0.15)"
-                          : "rgba(244, 63, 94, 0.15)",
-                      color:
-                        visualResult.recommendation === "SAFE_TO_ACCEPT"
-                          ? "#34d399"
-                          : visualResult.recommendation === "EXERCISE_CAUTION"
-                          ? "#fbbf24"
-                          : "#fb7185"
+                      background: "rgba(56, 189, 248, 0.12)",
+                      color: "#38bdf8"
                     }}
                   >
                     {visualResult.recommendation.replace(/_/g, " ")}
