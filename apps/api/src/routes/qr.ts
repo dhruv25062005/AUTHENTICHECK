@@ -56,7 +56,7 @@ router.get("/serial/:serial", requireAuth, requireRole("MANUFACTURER"), async (r
        JOIN products p ON p.id = pi.product_id
        JOIN manufacturers m ON m.id = p.manufacturer_id
        WHERE UPPER(pi.serial_number) = UPPER($1) AND m.user_id = $2 AND m.verification_status = 'VERIFIED' LIMIT 1`,
-      [String(req.params.serial), req.user!.id]
+      [String(Array.isArray(req.params.serial) ? req.params.serial[0] : req.params.serial), req.user!.id]
     );
     if (!instance.rows[0]) {
       res.status(404).json({ error: "Product instance not found" });
