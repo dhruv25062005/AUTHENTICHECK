@@ -3,7 +3,6 @@ import { z } from "zod";
 import { db } from "../db.js";
 import { requireAuth, type AuthenticatedRequest } from "../middleware/auth.js";
 import { rateLimit } from "../middleware/rateLimit.js";
-import { requireRole } from "../middleware/auth.js";
 
 const router = Router();
 
