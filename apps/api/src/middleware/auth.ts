@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { createHmac } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { env } from "../config/env.js";
 import type { AuthUser, UserRole } from "../types/auth.js";
 
@@ -20,9 +20,9 @@ function verifyToken(token: string): AuthUser | null {
     .update(`${header}.${payload}`)
     .digest("base64url");
 
-  if (signature !== expected) return null;
+  const signatureBytes = Buffer.from(signature);\n  const expectedBytes = Buffer.from(expected);\n  if (signatureBytes.length !== expectedBytes.length || !timingSafeEqual(signatureBytes, expectedBytes)) return null;
 
-  const body = decodePart(payload) as {
+  const parsedHeader = decodePart(header) as { alg?: string; typ?: string };\n  if (parsedHeader.alg !== "HS256" || parsedHeader.typ !== "JWT") return null;\n\n  const body = decodePart(payload) as {
     sub?: string; email?: string; role?: UserRole; fullName?: string; exp?: number;
   };
 
