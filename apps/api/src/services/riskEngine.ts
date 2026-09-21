@@ -3,6 +3,7 @@ export type RiskLabel = "GENUINE" | "SUSPICIOUS" | "HIGH_RISK";
 export interface RiskInput {
   identityValid: boolean;
   instanceActive: boolean;
+  lifecycleStatus?: string;
   previousScans: number;
   recentScanVelocity: number;
   visualSimilarity?: number;
@@ -20,7 +21,17 @@ export function assessRisk(input: RiskInput) {
   }
   if (!input.instanceActive) {
     score += 35;
-    reasons.push("Product instance is blocked or retired.");
+    reasons.push("Product instance is not active in the manufacturer lifecycle ledger.");
+  }
+  if (input.lifecycleStatus === "RECALLED") {
+    score += 45;
+    reasons.push("Product instance is marked as recalled.");
+  } else if (input.lifecycleStatus === "STOLEN") {
+    score += 50;
+    reasons.push("Product instance is marked as stolen.");
+  } else if (input.lifecycleStatus === "SOLD") {
+    score += 5;
+    reasons.push("Product instance is recorded as sold; verify the seller and scan context.");
   }
   if (input.recentScanVelocity >= 5) {
     score += 20;
