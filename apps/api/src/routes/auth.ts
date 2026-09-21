@@ -147,7 +147,7 @@ router.post("/forgot-password", rateLimit({ windowMs: 15 * 60_000, max: 10, keyP
         console.info("Password reset URL for development:", resetUrl);
       }
     }
-    res.json(env.NODE_ENV === "development" && user.rows[0] && rawToken ? { message: "Development reset token generated.", resetToken: rawToken } : { message: "If an account exists for this email, recovery instructions will be sent." });
+    res.json({ message: "If an account exists for this email, recovery instructions will be sent." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Password recovery request failed" });
