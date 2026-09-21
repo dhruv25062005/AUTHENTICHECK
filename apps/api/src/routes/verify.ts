@@ -119,6 +119,7 @@ router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify
     const risk = assessRisk({
       identityValid: true,
       instanceActive: item.instance_status === "ACTIVE",
+      lifecycleStatus: item.instance_status,
       previousScans,
       recentScanVelocity,
       reportCount: Number(reportResult.rows[0].count)
