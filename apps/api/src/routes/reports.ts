@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { db } from "../db.js";
 import { requireAuth, type AuthenticatedRequest } from "../middleware/auth.js";
+import { rateLimit } from "../middleware/rateLimit.js";
 
 const router = Router();
 
@@ -37,7 +38,7 @@ router.get("/", requireAuth, async (req: AuthenticatedRequest, res) => {
   }
 });
 
-router.post("/", async (req: AuthenticatedRequest, res) => {
+router.post("/", rateLimit({ windowMs: 15 * 60_000, max: 10, keyPrefix: "report" }), async (req: AuthenticatedRequest, res) => {
   const parsed = reportSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid report data", details: parsed.error.flatten() });
