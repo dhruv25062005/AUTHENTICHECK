@@ -111,7 +111,7 @@ router.post("/login", rateLimit({ windowMs: 15 * 60_000, max: 20, keyPrefix: "lo
 
 const forgotSchema = z.object({ email: z.string().email().transform(v => v.toLowerCase()) });
 
-router.post("/forgot-password", async (req, res) => {
+router.post("/forgot-password", rateLimit({ windowMs: 15 * 60_000, max: 10, keyPrefix: "forgot-password" }), async (req, res) => {
   const parsed = forgotSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid email address" });
