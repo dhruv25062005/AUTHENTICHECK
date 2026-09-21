@@ -233,7 +233,8 @@ export default function Dashboard() {
     setQrModal(true);
     try {
       const res = await fetch(apiUrl(`/api/v1/qr/serial/${encodeURIComponent(serial)}`), {
-        headers: { Authorization: `Bearer ${token}` }\n      });
+        headers: { Authorization: `Bearer ${token}` }
+      });
       const data = await res.json();
       setQrDataUrl(data.qrDataUrl);
       setQrVerificationUrl(data.verificationUrl);
@@ -251,10 +252,12 @@ export default function Dashboard() {
       ? batch.sampleSerials
       : [`${batch.batchCode}-001`, `${batch.batchCode}-002`];
 
-    let csv = "SerialNumber,ProductName,BatchCode,ManufacturingDate,VerificationURL,Status\n";
+    let csv = "SerialNumber,ProductName,BatchCode,ManufacturingDate,VerificationURL,Status
+";
     serials.forEach((sn) => {
       const vUrl = `${origin}/verify/${sn}`;
-      csv += `"${sn}","${prodName}","${batch.batchCode}","${batch.manufacturingDate}","${vUrl}","ACTIVE"\n`;
+      csv += `"${sn}","${prodName}","${batch.batchCode}","${batch.manufacturingDate}","${vUrl}","ACTIVE"
+`;
     });
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
