@@ -33,15 +33,7 @@ export default function ForgotPassword() {
       if (!res.ok) throw new Error(data.error || "Unable to send password reset instructions.");
       setSuccess(true);
     } catch (err: unknown) {
-      const fbErr = err as { code?: string; message?: string };
-      if (fbErr.code === "auth/user-not-found") {
-        setError("No AuthentiCheck account was found associated with this email address.");
-      } else if (fbErr.code === "auth/invalid-email") {
-        setError("The email address provided is not in a valid format.");
-      } else if (fbErr.code === "auth/too-many-requests") {
-        setError("Too many password reset requests sent. Please pause and try again in a few moments.");
-      } else {
-        setError(fbErr.message || "Failed to dispatch password reset request. Please check your connection.");
+      setError(err instanceof Error ? err.message : "Password recovery request failed.");
       }
     } finally {
       setLoading(false);
@@ -118,7 +110,7 @@ export default function ForgotPassword() {
               <CheckCircle2 className="w-6 h-6 text-emerald-400" />
             </div>
             <h2 style={{ fontSize: "18px", fontWeight: "700", color: "#f1f5f9", marginBottom: "8px" }}>
-              Reset Link Dispatched
+              Recovery Request Received
             </h2>
             <p style={{ fontSize: "14px", color: "#cbd5e1", lineHeight: "1.5", marginBottom: "16px" }}>
               We have forwarded password reset instructions to <strong className="text-sky-300">{email}</strong>.
@@ -183,7 +175,7 @@ export default function ForgotPassword() {
               id="btn-submit-forgot-password"
             >
               <KeyRound className="w-4 h-4" />
-              <span>{loading ? "Transmitting..." : "Send Reset Link"}</span>
+              <span>{loading ? "Transmitting..." : "Request Password Reset"}</span>
             </button>
           </form>
         )}
