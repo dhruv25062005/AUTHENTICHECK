@@ -779,13 +779,13 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
               <div style={{ textAlign: "center", padding: "24px 16px" }}>
                 <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto mb-3" />
                 <h4 style={{ fontSize: "18px", fontWeight: "700", color: "#f8fafc" }}>
-                  Incident Dispatched to Security Triage
+                  Incident Report Submitted
                 </h4>
                 <p style={{ color: "#94a3b8", fontSize: "14px", marginTop: "6px" }}>
                   Official Case Ref: <strong style={{ color: "#38bdf8", fontFamily: "monospace" }}>{reportRefId}</strong>
                 </p>
                 <p style={{ color: "#64748b", fontSize: "12px", marginTop: "4px", maxWidth: "420px", margin: "4px auto 16px auto" }}>
-                  Your incident has been written to the manufacturer immutable audit ledger. You can now download an official evidence dossier to dispute unauthorized charges with your credit card issuer, bank, or marketplace buyer protection.
+                  Your report has been recorded by AuthentiCheck. You can download a verification evidence summary for your records. It is supporting evidence, not a legal determination of authenticity or fraud.
                 </p>
 
                 <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
@@ -826,7 +826,7 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
                     style={{ background: "#e11d48", borderColor: "#f43f5e" }}
                   >
                     <Download className="w-4 h-4" />
-                    <span>Download Dispute Dossier PDF</span>
+                    <span>Download Evidence Summary PDF</span>
                   </button>
 
                   <button
