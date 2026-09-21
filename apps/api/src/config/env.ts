@@ -14,7 +14,8 @@ const schema = z.object({
   DATABASE_URL: z.string().min(1),
   JWT_ACCESS_SECRET: z.string().min(32),
   JWT_REFRESH_SECRET: z.string().min(32),
-  PUBLIC_VERIFY_URL: z.string().url().default("http://localhost:3000/verify")
+  PUBLIC_VERIFY_URL: z.string().url().default("http://localhost:3000/verify"),
+  AI_SERVICE_URL: z.string().url().default("http://localhost:8000")
 });
 
 export const env = schema.parse({
@@ -24,5 +25,6 @@ export const env = schema.parse({
   DATABASE_URL: process.env.DATABASE_URL,
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
-  PUBLIC_VERIFY_URL: process.env.PUBLIC_VERIFY_URL
+  PUBLIC_VERIFY_URL: process.env.PUBLIC_VERIFY_URL,
+  AI_SERVICE_URL: process.env.AI_SERVICE_URL
 });
