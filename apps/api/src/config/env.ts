@@ -16,7 +16,8 @@ const schema = z.object({
   JWT_REFRESH_SECRET: z.string().min(32),
   PUBLIC_VERIFY_URL: z.string().url().default("http://localhost:3000/verify"),
   AI_SERVICE_URL: z.string().url().default("http://localhost:8000"),
-  REDIS_URL: z.string().url().optional()
+  REDIS_URL: z.string().url().optional(),
+  RESET_URL: z.string().url().default("http://localhost:3000/reset-password")
 });
 
 export const env = schema.parse({
@@ -28,5 +29,6 @@ export const env = schema.parse({
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
   PUBLIC_VERIFY_URL: process.env.PUBLIC_VERIFY_URL,
   AI_SERVICE_URL: process.env.AI_SERVICE_URL,
-  REDIS_URL: process.env.REDIS_URL
+  REDIS_URL: process.env.REDIS_URL,
+  RESET_URL: process.env.RESET_URL
 });
