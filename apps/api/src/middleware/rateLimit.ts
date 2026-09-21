@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import Redis from "ioredis";
+import { Redis } from "ioredis";
 import { env } from "../config/env.js";
 
 type Bucket = { count: number; resetAt: number };
