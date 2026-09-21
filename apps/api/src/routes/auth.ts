@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
+import { createHash, randomBytes } from "node:crypto";
 import { db } from "../db.js";
 import { hashPassword, verifyPassword } from "../utils/password.js";
 import { createAccessToken } from "../utils/jwt.js";
@@ -117,9 +118,54 @@ router.post("/forgot-password", rateLimit({ windowMs: 15 * 60_000, max: 10, keyP
     res.status(400).json({ error: "Invalid email address" });
     return;
   }
-  // Do not reveal whether an account exists. Email delivery can be connected
-  // to a provider later without changing the public API contract.
-  res.json({ message: "If an account exists for this email, recovery instructions will be sent." });
+  try {
+    const user = await db.query("SELECT id FROM users WHERE email = $1 AND is_active = TRUE LIMIT 1", [parsed.data.email]);
+    if (user.rows[0]) {
+      const rawToken = randomBytes(32).toString("base64url");
+      const tokenHash = createHash("sha256").update(rawToken).digest("hex");
+      await db.query("UPDATE password_reset_tokens SET used_at = NOW() WHERE user_id = $1 AND used_at IS NULL", [user.rows[0].id]);
+      await db.query("INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, NOW() + INTERVAL '30 minutes')", [user.rows[0].id, tokenHash]);
+      if (env.NODE_ENV !== "production") {
+        console.info("Password reset token generated for development:", rawToken);
+      }
+    }
+    res.json({ message: "If an account exists for this email, recovery instructions will be sent." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Password recovery request failed" });
+  }
+});
+
+const resetRequestSchema = z.object({ token: z.string().min(32).max(200), newPassword: z.string().min(8).max(128) });
+
+router.post("/reset-password", rateLimit({ windowMs: 15 * 60_000, max: 10, keyPrefix: "reset-password" }), async (req, res) => {
+  const parsed = resetRequestSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "Invalid password reset request" });
+    return;
+  }
+  const tokenHash = createHash("sha256").update(parsed.data.token).digest("hex");
+  const client = await db.connect();
+  try {
+    await client.query("BEGIN");
+    const found = await client.query("SELECT id, user_id FROM password_reset_tokens WHERE token_hash = $1 AND used_at IS NULL AND expires_at > NOW() LIMIT 1 FOR UPDATE", [tokenHash]);
+    if (!found.rows[0]) {
+      await client.query("ROLLBACK");
+      res.status(400).json({ error: "Invalid or expired reset token" });
+      return;
+    }
+    const passwordHash = await hashPassword(parsed.data.newPassword);
+    await client.query("UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2", [passwordHash, found.rows[0].user_id]);
+    await client.query("UPDATE password_reset_tokens SET used_at = NOW() WHERE user_id = $1 AND used_at IS NULL", [found.rows[0].user_id]);
+    await client.query("COMMIT");
+    res.json({ message: "Password updated successfully. Please sign in again." });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error(error);
+    res.status(500).json({ error: "Password reset failed" });
+  } finally {
+    client.release();
+  }
 });
 
 export default router;
