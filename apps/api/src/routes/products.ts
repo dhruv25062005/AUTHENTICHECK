@@ -192,7 +192,7 @@ router.get("/", requireAuth, requireRole("MANUFACTURER"), async (req: Authentica
        JOIN manufacturers m ON m.id = p.manufacturer_id
        LEFT JOIN product_instances pi ON pi.product_id = p.id
        LEFT JOIN product_batches pb ON pb.product_id = p.id
-       WHERE m.user_id = $1
+       WHERE m.user_id = $1 AND m.verification_status = 'VERIFIED'
        GROUP BY p.id
        ORDER BY p.created_at DESC`,
       [req.user!.id]
