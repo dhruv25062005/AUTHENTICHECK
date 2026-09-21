@@ -120,9 +120,10 @@ router.post("/forgot-password", rateLimit({ windowMs: 15 * 60_000, max: 10, keyP
     return;
   }
   try {
+    let rawToken: string | undefined;
     const user = await db.query("SELECT id FROM users WHERE email = $1 AND is_active = TRUE LIMIT 1", [parsed.data.email]);
     if (user.rows[0]) {
-      const rawToken = randomBytes(32).toString("base64url");
+      rawToken = randomBytes(32).toString("base64url");
       const tokenHash = createHash("sha256").update(rawToken).digest("hex");
       await db.query("UPDATE password_reset_tokens SET used_at = NOW() WHERE user_id = $1 AND used_at IS NULL", [user.rows[0].id]);
       await db.query("INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, NOW() + INTERVAL '30 minutes')", [user.rows[0].id, tokenHash]);
