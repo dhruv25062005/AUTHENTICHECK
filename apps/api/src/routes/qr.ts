@@ -18,6 +18,8 @@ async function issueQr(instanceId: string) {
     [instanceId]
   );
   if (!instance.rows[0]) return null;
+  const lifecycle = await db.query("SELECT pi.status, m.verification_status FROM product_instances pi JOIN products p ON p.id = pi.product_id JOIN manufacturers m ON m.id = p.manufacturer_id WHERE pi.id = $1", [instanceId]);
+  if (lifecycle.rows[0]?.verification_status !== "VERIFIED" || lifecycle.rows[0]?.status !== "ACTIVE") return null;
   const rawToken = randomBytes(32).toString("base64url");
   const tokenHash = createHash("sha256").update(rawToken).digest("hex");
   await db.query("UPDATE qr_codes SET revoked_at = NOW() WHERE product_instance_id = $1 AND revoked_at IS NULL", [instanceId]);
