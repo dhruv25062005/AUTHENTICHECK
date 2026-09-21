@@ -158,7 +158,7 @@ router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify
         item.instance_status === "ACTIVE" ? 100 : 0,
         Math.max(0, 100 - Math.min(recentScanVelocity * 15, 100)),
         Math.max(0, 100 - Math.min(previousScans * 2, 100)),
-        Math.max(0, 100 - Math.min(Number(reportResult.rows[0].count) * 20, 100)),
+        Math.min(Number(reportResult.rows[0].count) * 20, 100),
         risk.score,
         JSON.stringify(risk.reasons)
       ]
