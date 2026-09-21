@@ -232,7 +232,8 @@ export default function Dashboard() {
     setActiveSerial(serial);
     setQrModal(true);
     try {
-      const res = await fetch(apiUrl(`/api/v1/qr/serial/${encodeURIComponent(serial)}`), {\n        headers: { Authorization: `Bearer ${token}` }\n      });
+      const res = await fetch(apiUrl(`/api/v1/qr/serial/${encodeURIComponent(serial)}`), {
+        headers: { Authorization: `Bearer ${token}` }\n      });
       const data = await res.json();
       setQrDataUrl(data.qrDataUrl);
       setQrVerificationUrl(data.verificationUrl);
