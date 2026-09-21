@@ -64,6 +64,17 @@ Start the AI service from services/ai with: uvicorn app.main:app --host 0.0.0.0 
 
 Apply migrations in filename order from database/migrations/001_initial_schema.sql through 005_product_lifecycle.sql.
 
+## Production deployment checklist
+
+1. Apply all migrations exactly once using a migration runner; do not manually reorder migration files.
+2. Set `NODE_ENV=production`, strong unique JWT secrets, a production `WEB_ORIGIN`, `PUBLIC_VERIFY_URL`, `AI_SERVICE_URL`, and Redis.
+3. Configure `RESEND_API_KEY` and a verified `RESEND_FROM_EMAIL` before starting the API in production.
+4. Put PostgreSQL and Redis behind private networking where supported; do not expose database ports publicly.
+5. Terminate TLS at the deployment edge and serve the web/API over HTTPS.
+6. Configure backups and restore testing for PostgreSQL.
+7. Store evidence/reference images in private object storage with signed URLs rather than database blobs.
+8. Monitor API, AI, database, and Redis health endpoints and alert on repeated failures.
+
 ## Production requirements
 
 - Move rate limiting to Redis for multi-instance deployments.
