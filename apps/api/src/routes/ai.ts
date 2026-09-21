@@ -56,7 +56,10 @@ router.post("/inspect", rateLimit({ windowMs: 60_000, max: 12, keyPrefix: "ai-in
       status: data.status,
       message: data.message,
       signals: data.signals ?? { similarity: null, anomaly: null },
-      modelVersion: data.modelVersion
+      modelVersion: data.modelVersion,
+      capability: data.capability ?? "image-quality-only",
+      referenceComparisonAvailable: data.referenceComparisonAvailable ?? false,
+      referenceCount: data.referenceCount ?? 0
     });
   } catch (error) {
     console.error("AI service error:", error);
