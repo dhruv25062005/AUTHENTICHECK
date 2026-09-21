@@ -1,48 +1,80 @@
 # AuthentiCheck
 
-AI-Powered Product Authentication & Counterfeit Risk Detection Platform.
+**AuthentiCheck — AI-assisted product authentication and counterfeit-risk verification platform.**
 
-## Status
+AuthentiCheck combines manufacturer registration, product identity records, opaque QR credentials, serial verification, scan history, consumer reports, lifecycle status, and explainable risk rules. Visual AI is an additional signal; it is not treated as proof of authenticity.
 
-Phase 1 foundation.
+## Current architecture
 
-## Planned stack
+Next.js web → Express + TypeScript API → PostgreSQL
 
-- Frontend: Next.js + TypeScript + Tailwind CSS
-- Backend: Node.js + Express + TypeScript
-- Database: PostgreSQL
-- Cache/queues: Redis
-- AI service: Python + FastAPI
-- Object storage: S3-compatible storage
-- Authentication: JWT + role-based access control
-- Deployment: Docker + cloud
+Express also connects to a FastAPI image-analysis service.
 
-## Core workflow
+## Implemented workflows
 
-Manufacturer → Product → Batch → Product Instance → Secure QR/Serial → Consumer Verification → AI/Image Signals + Scan Behavior → Risk Engine → Result → Investigation/Analytics
+- Email/password registration and login with short-lived HS256 access tokens.
+- Consumer and manufacturer roles.
+- Manufacturer verification workflow for administrators.
+- Product creation and batch/serial issuance restricted to verified manufacturers.
+- Opaque QR credentials with SHA-256 hashes stored in PostgreSQL.
+- QR revocation when a replacement QR is issued.
+- Serial and QR verification.
+- Scan history and recent-scan velocity signals.
+- Privacy-preserving IP/device fingerprints for scan history.
+- Product lifecycle states including active, sold, recalled, blocked, stolen, and retired.
+- Explainable risk assessments with versioned rules.
+- Consumer counterfeit/suspicion reports.
+- Manufacturer analytics.
+- Audit-log records for administrative and lifecycle changes.
+- Database-backed password-reset tokens.
+- Baseline image-quality analysis through FastAPI/Pillow.
+- Explicit AI-unavailable state; registry verification remains independent.
 
-## Important design principle
+## Verification model
 
-AuthentiCheck does not treat a QR code or AI image prediction alone as proof of authenticity. It combines multiple signals and presents a risk-oriented verification result.
+A QR code is an identity credential, not proof by itself.
+
+A verification can combine registered identity, QR credential validity, lifecycle status, scan behavior, consumer reports, visual-analysis signals, and explainable risk rules.
+
+The result is a risk-oriented assessment such as GENUINE, SUSPICIOUS, or HIGH_RISK. It is not a legal determination of authenticity or fraud.
+
+## AI limitation
+
+The included FastAPI service currently provides a real image-quality baseline using resolution, exposure, and contrast. It does not claim to classify counterfeit products.
+
+Reference-image similarity requires manufacturer reference images and a trained/comparison model. The application therefore reports unavailable similarity rather than inventing a confidence score.
 
 ## Repository structure
 
-```
-apps/
-  web/       # Next.js frontend
-  api/       # Express API
-services/
-  ai/        # FastAPI AI service
-database/
-  migrations/
-  seeds/
-packages/
-  shared/
-  types/
-docs/
-  architecture/
-  api/
-docker/
-```
+apps/web  — Next.js frontend
+apps/api  — Express API
+services/ai  — FastAPI image-analysis service
+database/migrations  — PostgreSQL migrations
 
-More implementation documentation will be added as each phase is completed.
+## Local development
+
+Create the repository-root .env with DATABASE_URL, WEB_ORIGIN, PUBLIC_VERIFY_URL, AI_SERVICE_URL, JWT_ACCESS_SECRET, and JWT_REFRESH_SECRET.
+
+Start the API with: npm run dev:api
+Start the web app with: npm run dev:web
+
+Start the AI service from services/ai with: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+## Database migrations
+
+Apply migrations in filename order from database/migrations/001_initial_schema.sql through 005_product_lifecycle.sql.
+
+## Production requirements
+
+- Move rate limiting to Redis for multi-instance deployments.
+- Connect password recovery to a real email provider; development reset tokens must never be exposed in production.
+- Add object storage for uploaded evidence/reference images.
+- Train and validate a reference-image model with a representative dataset.
+- Add automated API, database, and browser tests.
+- Use managed secret storage and rotate JWT secrets.
+- Run migrations through a controlled migration runner.
+- Review retention/privacy requirements for scan fingerprints and uploaded images.
+
+## Security principle
+
+AuthentiCheck provides evidence and risk signals to support investigation. A QR code, image model, or risk score alone does not establish authenticity, fraud, or legal liability.
