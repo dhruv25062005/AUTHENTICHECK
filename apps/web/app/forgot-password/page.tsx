@@ -30,14 +30,14 @@ export default function ForgotPassword() {
         body: JSON.stringify({ email: cleanEmail })
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || "Unable to send password reset instructions.");
+      if (!res.ok) throw new Error(data.error || "Unable to process password recovery.");
       setSuccess(true);
-    } catch (err: unknown) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : "Password recovery request failed.");
-      }
     } finally {
       setLoading(false);
     }
+
   }
 
   return (
