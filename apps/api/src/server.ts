@@ -43,6 +43,7 @@ import reportRoutes from "./routes/reports.js";
 import analyticsRoutes from "./routes/analytics.js";
 import aiRoutes from "./routes/ai.js";
 import adminRoutes from "./routes/admin.js";
+import lifecycleRoutes from "./routes/lifecycle.js";
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/me", meRoutes);
@@ -54,6 +55,7 @@ app.use("/api/v1/reports", reportRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 app.use("/api/v1/ai", aiRoutes);
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/lifecycle", lifecycleRoutes);
 
 app.get("/api/v1", (_req, res) => {
   res.json({
