@@ -6,6 +6,7 @@ import { hashPassword, verifyPassword } from "../utils/password.js";
 import { createAccessToken } from "../utils/jwt.js";
 import type { UserRole } from "../types/auth.js";
 import { rateLimit } from "../middleware/rateLimit.js";
+import { env } from "../config/env.js";
 
 const router = Router();
 
