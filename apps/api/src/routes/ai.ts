@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { env } from "../config/env.js";
+import { rateLimit } from "../middleware/rateLimit.js";
 
 const router = Router();
 
@@ -10,7 +11,7 @@ const schema = z.object({
   notes: z.string().trim().max(2000).optional()
 });
 
-router.post("/inspect", async (req, res) => {
+router.post("/inspect", rateLimit({ windowMs: 60_000, max: 12, keyPrefix: "ai-inspect" }), async (req, res) => {
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid inspection request", details: parsed.error.flatten() });
