@@ -41,7 +41,7 @@ router.get("/instance/:instanceId", requireAuth, requireRole("MANUFACTURER"), as
       res.status(404).json({ error: "Product instance not found" });
       return;
     }
-    const result = await issueQr(req.params.instanceId);
+    const result = await issueQr(String(Array.isArray(req.params.instanceId) ? req.params.instanceId[0] : req.params.instanceId));
     res.json(result);
   } catch (error) {
     console.error(error);
