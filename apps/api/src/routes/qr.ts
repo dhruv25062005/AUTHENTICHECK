@@ -44,6 +44,10 @@ router.get("/instance/:instanceId", requireAuth, requireRole("MANUFACTURER"), as
       return;
     }
     const result = await issueQr(String(Array.isArray(req.params.instanceId) ? req.params.instanceId[0] : req.params.instanceId));
+    if (!result) {
+      res.status(409).json({ error: "QR issuance requires a verified manufacturer and ACTIVE product instance" });
+      return;
+    }
     res.json(result);
   } catch (error) {
     console.error(error);
@@ -64,7 +68,12 @@ router.get("/serial/:serial", requireAuth, requireRole("MANUFACTURER"), async (r
       res.status(404).json({ error: "Product instance not found" });
       return;
     }
-    res.json(await issueQr(instance.rows[0].id));
+    const result = await issueQr(instance.rows[0].id);
+    if (!result) {
+      res.status(409).json({ error: "QR issuance requires a verified manufacturer and ACTIVE product instance" });
+      return;
+    }
+    res.json(result);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to generate QR" });
