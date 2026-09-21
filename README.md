@@ -78,7 +78,7 @@ Apply migrations in filename order from database/migrations/001_initial_schema.s
 ## Production requirements
 
 - Move rate limiting to Redis for multi-instance deployments.
-- Connect password recovery to a real email provider; development reset tokens must never be exposed in production.
+- Password recovery supports Resend when configured; development reset links are logged locally and API responses remain privacy-safe.
 - Add object storage for uploaded evidence/reference images.
 - Train and validate a reference-image model with a representative dataset.
 - Add automated API, database, and browser tests.
