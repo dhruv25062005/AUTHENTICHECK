@@ -47,11 +47,15 @@ export default function Login() {
         <form onSubmit={submit} className="app-form">
           <div className="form-group"><label className="form-label">Email Address</label><input type="email" className="form-input" value={email} onChange={e=>setEmail(e.target.value)} required /></div>
           <div className="form-group"><label className="form-label">Password</label><input type="password" className="form-input" value={password} onChange={e=>setPassword(e.target.value)} required /></div>
+          <div style={{ textAlign: "right", marginTop: "-6px", marginBottom: "14px" }}>
+            <Link href="/forgot-password" style={{ color: "#38bdf8", fontSize: "13px", fontWeight: 600, textDecoration: "none" }}>
+              Forgot password?
+            </Link>
+          </div>
           <button type="submit" disabled={loading} className="btn-accent" style={{ width:"100%", justifyContent:"center", padding:"12px" }}><LogIn className="w-4 h-4" /><span>{loading ? "Signing in..." : "Sign In"}</span></button>
         </form>
         <div style={{ marginTop:"20px", textAlign:"center", borderTop:"1px solid var(--border-dim)", paddingTop:"16px" }}>
           <p style={{ fontSize:"13px", color:"#94a3b8" }}>New to AuthentiCheck? <Link href="/register" style={{ color:"#38bdf8", fontWeight:600 }}>Create an account</Link></p>
-          <p style={{ fontSize:"11px", color:"#64748b", marginTop:"10px" }}>Forgot password? Contact the system administrator during this prototype phase.</p>
         </div>
       </section>
     </main>
