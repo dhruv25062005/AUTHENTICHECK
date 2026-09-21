@@ -4,6 +4,7 @@ import { db } from "../db.js";
 import { hashPassword, verifyPassword } from "../utils/password.js";
 import { createAccessToken } from "../utils/jwt.js";
 import type { UserRole } from "../types/auth.js";
+import { rateLimit } from "../middleware/rateLimit.js";
 
 const router = Router();
 
@@ -20,7 +21,7 @@ const loginSchema = z.object({
   password: z.string().min(1).max(128)
 });
 
-router.post("/register", async (req, res) => {
+router.post("/register", rateLimit({ windowMs: 15 * 60_000, max: 10, keyPrefix: "register" }), async (req, res) => {
   const parsed = registerSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid registration data", details: parsed.error.flatten() });
