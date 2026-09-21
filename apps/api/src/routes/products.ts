@@ -34,12 +34,17 @@ router.post("/", requireAuth, requireRole("MANUFACTURER"), async (req: Authentic
 
   try {
     const manufacturer = await db.query(
-      "SELECT id FROM manufacturers WHERE user_id = $1 LIMIT 1",
+      "SELECT id, verification_status FROM manufacturers WHERE user_id = $1 LIMIT 1",
       [req.user!.id]
     );
 
     if (!manufacturer.rows[0]) {
       res.status(403).json({ error: "Manufacturer profile not found" });
+      return;
+    }
+
+    if (manufacturer.rows[0].verification_status !== "VERIFIED") {
+      res.status(403).json({ error: "Manufacturer verification is required before creating products" });
       return;
     }
 
