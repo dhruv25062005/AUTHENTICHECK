@@ -20,9 +20,14 @@ function verifyToken(token: string): AuthUser | null {
     .update(`${header}.${payload}`)
     .digest("base64url");
 
-  const signatureBytes = Buffer.from(signature);\n  const expectedBytes = Buffer.from(expected);\n  if (signatureBytes.length !== expectedBytes.length || !timingSafeEqual(signatureBytes, expectedBytes)) return null;
+  const signatureBytes = Buffer.from(signature);
+  const expectedBytes = Buffer.from(expected);
+  if (signatureBytes.length !== expectedBytes.length || !timingSafeEqual(signatureBytes, expectedBytes)) return null;
 
-  const parsedHeader = decodePart(header) as { alg?: string; typ?: string };\n  if (parsedHeader.alg !== "HS256" || parsedHeader.typ !== "JWT") return null;\n\n  const body = decodePart(payload) as {
+  const parsedHeader = decodePart(header) as { alg?: string; typ?: string };
+  if (parsedHeader.alg !== "HS256" || parsedHeader.typ !== "JWT") return null;
+
+  const body = decodePart(payload) as {
     sub?: string; email?: string; role?: UserRole; fullName?: string; exp?: number;
   };
 
