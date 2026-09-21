@@ -176,7 +176,8 @@ router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify
       },
       history: {
         previousScans,
-        recentScanVelocity
+        recentScanVelocity,
+        distinctScanSources: distinctIpCount
       },
       reasons: risk.reasons,
       verifiedAt: scan.rows[0].created_at
