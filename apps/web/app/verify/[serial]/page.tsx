@@ -81,6 +81,7 @@ type Result = {
 type AIInspectionResult = {
   success: boolean;
   matchScore: number;
+  qualityScore?: number;
   riskTier: "LOW_RISK" | "MODERATE_RISK" | "HIGH_RISK";
   hologramFoilStatus: string;
   typographyStatus: string;
@@ -174,6 +175,7 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
       setVisualResult({
         success: Boolean(data.success),
         matchScore: typeof data.signals?.similarity === "number" ? Math.round(data.signals.similarity * 100) : 0,
+        qualityScore: typeof data.signals?.qualityScore === "number" ? Math.round(data.signals.qualityScore * 100) : undefined,
         riskTier: data.signals?.anomaly > 0.5 ? "HIGH_RISK" : "MODERATE_RISK",
         hologramFoilStatus: data.message || "No hologram-specific model signal is available.",
         typographyStatus: data.message || "No typography-specific model signal is available.",
@@ -621,7 +623,7 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
                 />
                 <div>
                   <div style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc" }}>Photo attached for AI vision audit</div>
-                  <div style={{ fontSize: "12px", color: "#94a3b8" }}>Gemini vision model will inspect hologram diffraction, fonts, and tamper seals.</div>
+                  <div style={{ fontSize: "12px", color: "#94a3b8" }}>The current AI service measures image quality. Authenticity comparison requires manufacturer reference images and a trained model.</div>
                 </div>
                 <button
                   type="button"
@@ -653,7 +655,7 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px", flexWrap: "wrap", gap: "8px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <span style={{ fontSize: "13px", fontWeight: "700", color: "#f8fafc" }}>
-                      Optical Packaging Match Score:
+                      Visual Reference Match Score:
                     </span>
                     <span
                       style={{
@@ -663,7 +665,7 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
                         fontFamily: "monospace"
                       }}
                     >
-                      {visualResult.matchScore.toFixed(1)}%
+                      {visualResult.matchScore > 0 ? `${visualResult.matchScore.toFixed(1)}%` : "Not available"}
                     </span>
                   </div>
 
