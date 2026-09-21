@@ -146,14 +146,36 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setVisualError("Please choose a JPEG, PNG, or WebP image.");
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (event) => {
-      setPhotoDataUrl(event.target?.result as string);
+      const source = String(event.target?.result || "");
+      const image = new Image();
+      image.onload = () => {
+        const maxSide = 1280;
+        const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(image.width * scale));
+        canvas.height = Math.max(1, Math.round(image.height * scale));
+        const context = canvas.getContext("2d");
+        if (!context) {
+          setPhotoDataUrl(source);
+          return;
+        }
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        setPhotoDataUrl(canvas.toDataURL("image/jpeg", 0.78));
+      };
+      image.src = source;
     };
     reader.readAsDataURL(file);
   };
 
   const handleRunVisualCheck = async () => {
+    if (!photoDataUrl) { setVisualError("Upload a product image before starting inspection."); return; }
     setVisualAnalysisRunning(true);
     setVisualError("");
     try {
