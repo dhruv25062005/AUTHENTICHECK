@@ -81,7 +81,7 @@ router.post("/:productId/batches", requireAuth, requireRole("MANUFACTURER"), asy
        SELECT p.id, $2, $3, $4
        FROM products p
        JOIN manufacturers m ON m.id = p.manufacturer_id
-       WHERE p.id = $1 AND m.user_id = $5
+       WHERE p.id = $1 AND m.user_id = $5 AND m.verification_status = 'VERIFIED'
        RETURNING id, product_id, batch_code, manufacturing_date, quantity, created_at`,
       [
         req.params.productId,
