@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from io import BytesIO
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from PIL import Image, ImageStat, UnidentifiedImageError
 
 app = FastAPI(title="AuthentiCheck AI Service", version="0.2.0")
@@ -21,7 +21,7 @@ def health():
 
 
 @app.post("/api/v1/image/analyze")
-async def analyze_image(file: UploadFile = File(...)):
+async def analyze_image(file: UploadFile = File(...), reference_count: int = Form(0)):
     if file.content_type not in ALLOWED:
         raise HTTPException(400, "Unsupported image type")
 
@@ -49,6 +49,9 @@ async def analyze_image(file: UploadFile = File(...)):
             "modelVersion": "quality-baseline-0.2",
             "status": "ok",
             "message": quality_note,
+            "capability": "image-quality-only",
+            "referenceComparisonAvailable": False,
+            "referenceCount": max(0, reference_count),
             "signals": {
                 "similarity": None,
                 "anomaly": round(1.0 - quality, 4),
