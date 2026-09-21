@@ -73,8 +73,6 @@ router.patch("/manufacturers/:manufacturerId", requireAuth, requireRole("ADMIN")
   }
 });
 
-export default router;
-
 router.get("/audit-logs", requireAuth, requireRole("ADMIN"), async (_req, res) => {
   try {
     const result = await db.query(
@@ -130,3 +128,4 @@ router.patch("/reports/:reportId", requireAuth, requireRole("ADMIN"), async (req
   }
 });
 
+export default router;
