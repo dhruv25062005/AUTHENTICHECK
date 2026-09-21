@@ -34,7 +34,7 @@ router.get("/instance/:instanceId", requireAuth, requireRole("MANUFACTURER"), as
       `SELECT pi.id FROM product_instances pi
        JOIN products p ON p.id = pi.product_id
        JOIN manufacturers m ON m.id = p.manufacturer_id
-       WHERE pi.id = $1 AND m.user_id = $2 LIMIT 1`,
+       WHERE pi.id = $1 AND m.user_id = $2 AND m.verification_status = 'VERIFIED' LIMIT 1`,
       [req.params.instanceId, req.user!.id]
     );
     if (!owned.rows[0]) {
@@ -55,7 +55,7 @@ router.get("/serial/:serial", requireAuth, requireRole("MANUFACTURER"), async (r
       `SELECT pi.id FROM product_instances pi
        JOIN products p ON p.id = pi.product_id
        JOIN manufacturers m ON m.id = p.manufacturer_id
-       WHERE UPPER(pi.serial_number) = UPPER($1) AND m.user_id = $2 LIMIT 1`,
+       WHERE UPPER(pi.serial_number) = UPPER($1) AND m.user_id = $2 AND m.verification_status = 'VERIFIED' LIMIT 1`,
       [req.params.serial, req.user!.id]
     );
     if (!instance.rows[0]) {
