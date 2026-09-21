@@ -27,5 +27,8 @@ CREATE TABLE IF NOT EXISTS manufacturer_references (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_manufacturer_references_product_model
+  ON manufacturer_references(product_id, model_version, image_url);
+
 CREATE INDEX IF NOT EXISTS idx_manufacturer_references_product
   ON manufacturer_references(product_id);
