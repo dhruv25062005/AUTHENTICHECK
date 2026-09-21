@@ -127,8 +127,24 @@ router.post("/forgot-password", rateLimit({ windowMs: 15 * 60_000, max: 10, keyP
       const tokenHash = createHash("sha256").update(rawToken).digest("hex");
       await db.query("UPDATE password_reset_tokens SET used_at = NOW() WHERE user_id = $1 AND used_at IS NULL", [user.rows[0].id]);
       await db.query("INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, NOW() + INTERVAL '30 minutes')", [user.rows[0].id, tokenHash]);
-      if (env.NODE_ENV !== "production") {
-        console.info("Password reset URL for development:", `${env.RESET_URL}?token=${rawToken}`);
+      const resetUrl = `${env.RESET_URL}?token=${encodeURIComponent(rawToken)}`;
+      if (env.RESEND_API_KEY && env.RESEND_FROM_EMAIL) {
+        const response = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${env.RESEND_API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            from: env.RESEND_FROM_EMAIL,
+            to: [parsed.data.email],
+            subject: "Reset your AuthentiCheck password",
+            text: `Use this link within 30 minutes to reset your AuthentiCheck password: ${resetUrl}`
+          })
+        });
+        if (!response.ok) throw new Error("Password reset email delivery failed");
+      } else if (env.NODE_ENV !== "production") {
+        console.info("Password reset URL for development:", resetUrl);
       }
     }
     res.json(env.NODE_ENV === "development" && user.rows[0] && rawToken ? { message: "Development reset token generated.", resetToken: rawToken } : { message: "If an account exists for this email, recovery instructions will be sent." });
