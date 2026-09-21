@@ -11,6 +11,7 @@ const port = env.PORT;
 const webOrigin = env.WEB_ORIGIN;
 
 app.disable("x-powered-by");
+app.set("trust proxy", 1);
 app.use(helmet());
 app.use(cors({ origin: webOrigin, credentials: true }));
 app.use(express.json({ limit: "256kb" }));
