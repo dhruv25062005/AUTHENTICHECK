@@ -30,6 +30,7 @@ import { generateDisputeDossierPrintable } from "../../utils/disputeDossier";
 import HologramBadge3D from "../../components/HologramBadge3D";
 import Product3DShowcase from "../../components/Product3DShowcase";
 import Interactive3DCard from "../../components/Interactive3DCard";
+import { apiUrl } from "../../../lib/api";
 
 type SafetyAdvisory = {
   id: string;
@@ -155,7 +156,7 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
     setVisualAnalysisRunning(true);
     setVisualError("");
     try {
-      const res = await fetch(apiUrl("/api/v1/ai/inspect", {
+      const res = await fetch(apiUrl("/api/v1/ai/inspect"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
