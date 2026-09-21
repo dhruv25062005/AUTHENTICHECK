@@ -252,12 +252,10 @@ export default function Dashboard() {
       ? batch.sampleSerials
       : [`${batch.batchCode}-001`, `${batch.batchCode}-002`];
 
-    let csv = "SerialNumber,ProductName,BatchCode,ManufacturingDate,VerificationURL,Status
-";
+    let csv = "SerialNumber,ProductName,BatchCode,ManufacturingDate,VerificationURL,Status\\n";
     serials.forEach((sn) => {
       const vUrl = `${origin}/verify/${sn}`;
-      csv += `"${sn}","${prodName}","${batch.batchCode}","${batch.manufacturingDate}","${vUrl}","ACTIVE"
-`;
+      csv += `"${sn}","${prodName}","${batch.batchCode}","${batch.manufacturingDate}","${vUrl}","ACTIVE"\\n`;
     });
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
