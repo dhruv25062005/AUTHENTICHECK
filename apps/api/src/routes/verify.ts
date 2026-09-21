@@ -27,6 +27,10 @@ router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify
     return;
   }
 
+  const clientIp = getClientIp(req);
+  const ipHash = clientIp ? createHash("sha256").update(env.JWT_ACCESS_SECRET + ":" + clientIp).digest("hex") : null;
+  const deviceHash = req.headers["user-agent"] ? createHash("sha256").update(env.JWT_ACCESS_SECRET + ":" + String(req.headers["user-agent"])).digest("hex") : null;
+
   const client = await db.connect();
   try {
     await client.query("BEGIN");
@@ -106,10 +110,6 @@ router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify
       [item.instance_id]
     );
     const previousScans = Number(countResult.rows[0].count);
-
-    const clientIp = getClientIp(req);
-    const ipHash = clientIp ? createHash("sha256").update(env.JWT_ACCESS_SECRET + ":" + clientIp).digest("hex") : null;
-    const deviceHash = req.headers["user-agent"] ? createHash("sha256").update(env.JWT_ACCESS_SECRET + ":" + String(req.headers["user-agent"])).digest("hex") : null;
 
     const velocityResult = await client.query(
       `SELECT COUNT(*)::int AS count
