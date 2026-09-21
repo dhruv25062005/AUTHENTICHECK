@@ -55,9 +55,9 @@ router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify
 
     if (!product.rows[0]) {
       await client.query(
-        `INSERT INTO scans (serial_entered, scan_method, status, risk_score)
-         VALUES ($1, 'SERIAL'::text, 'HIGH_RISK'::verification_status, 100)`,
-        [serial]
+        `INSERT INTO scans (serial_entered, scan_method, ip_hash, device_hash, status, risk_score)
+         VALUES ($1, 'SERIAL'::text, $2, $3, 'HIGH_RISK'::verification_status, 100)`,
+        [serial, ipHash, deviceHash]
       );
       await client.query("COMMIT");
       res.status(404).json({
