@@ -248,9 +248,8 @@ export default function Dashboard() {
     const prod = products.find((p) => p.id === batch.productId);
     const prodName = prod?.name || "Product";
 
-    const serials = batch.sampleSerials && batch.sampleSerials.length > 0
-      ? batch.sampleSerials
-      : [`${batch.batchCode}-001`, `${batch.batchCode}-002`];
+    const serials = batch.sampleSerials ?? [];
+    if (serials.length === 0) return;
 
     let csv = "SerialNumber,ProductName,BatchCode,ManufacturingDate,VerificationURL,Status\\n";
     serials.forEach((sn) => {
