@@ -1187,7 +1187,7 @@ export default function Dashboard() {
               }}
               id="printable-stickers-area"
             >
-              {(activeBatchForLabels.sampleSerials || ["AC-DEMO-001", "AC-LUX-78291", "AC-SUS-44102"]).map((serial, idx) => (
+              {(activeBatchForLabels.sampleSerials || []).map((serial, idx) => (
                 <div
                   key={idx}
                   style={{
