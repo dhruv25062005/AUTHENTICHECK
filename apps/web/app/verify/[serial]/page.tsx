@@ -82,13 +82,13 @@ type AIInspectionResult = {
   success: boolean;
   matchScore: number;
   qualityScore?: number;
-  riskTier: "LOW_RISK" | "MODERATE_RISK" | "HIGH_RISK";
+  riskTier: "NOT_CLASSIFIED";
   hologramFoilStatus: string;
   typographyStatus: string;
   sealIntegrity: string;
   detectedAnomalies: string[];
   forensicSummary: string;
-  recommendation: "SAFE_TO_ACCEPT" | "EXERCISE_CAUTION" | "DO_NOT_PURCHASE";
+  recommendation: "REVIEW_ONLY";
   analyzedBy: string;
 };
 
@@ -198,13 +198,13 @@ export default function VerifyPage({ params }: { params: Promise<{ serial: strin
         success: Boolean(data.success),
         matchScore: typeof data.signals?.similarity === "number" ? Math.round(data.signals.similarity * 100) : 0,
         qualityScore: typeof data.signals?.qualityScore === "number" ? Math.round(data.signals.qualityScore * 100) : undefined,
-        riskTier: data.signals?.anomaly > 0.5 ? "HIGH_RISK" : "MODERATE_RISK",
+        riskTier: "NOT_CLASSIFIED",
         hologramFoilStatus: data.message || "No hologram-specific model signal is available.",
         typographyStatus: data.message || "No typography-specific model signal is available.",
         sealIntegrity: data.message || "No seal-specific model signal is available.",
         detectedAnomalies: data.signals?.anomaly != null ? [`Anomaly signal: ${data.signals.anomaly}`] : [],
         forensicSummary: data.message || "Visual inspection response received.",
-        recommendation: data.signals?.anomaly > 0.5 ? "EXERCISE_CAUTION" : "EXERCISE_CAUTION",
+        recommendation: "REVIEW_ONLY",
         analyzedBy: data.modelVersion || "AuthentiCheck AI Gateway"
       });
     } catch (err) {
