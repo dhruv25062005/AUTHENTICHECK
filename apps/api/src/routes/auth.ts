@@ -33,11 +33,6 @@ router.post("/register", async (req, res) => {
     return;
   }
 
-  if (role === "MANUFACTURER" && !organizationName) {
-    res.status(400).json({ error: "organizationName is required for manufacturers" });
-    return;
-  }
-
   try {
     const passwordHash = await hashPassword(password);
     const result = await db.query(
