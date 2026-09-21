@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { createHash } from "node:crypto";
 import { db } from "../db.js";
+import { env } from "../config/env.js";
 import { assessRisk } from "../services/riskEngine.js";
 import { rateLimit } from "../middleware/rateLimit.js";
 
@@ -99,6 +100,10 @@ router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify
     );
     const previousScans = Number(countResult.rows[0].count);
 
+    const clientIp = getClientIp(req);
+    const ipHash = clientIp ? createHash("sha256").update(env.JWT_ACCESS_SECRET + ":" + clientIp).digest("hex") : null;
+    const deviceHash = req.headers["user-agent"] ? createHash("sha256").update(env.JWT_ACCESS_SECRET + ":" + String(req.headers["user-agent"])).digest("hex") : null;
+
     const velocityResult = await client.query(
       `SELECT COUNT(*)::int AS count
        FROM scans
@@ -107,6 +112,9 @@ router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify
       [item.instance_id]
     );
     const recentScanVelocity = Number(velocityResult.rows[0].count);
+
+    const distinctIpResult = await client.query("SELECT COUNT(DISTINCT ip_hash)::int AS count FROM scans WHERE product_instance_id = $1 AND ip_hash IS NOT NULL", [item.instance_id]);
+    const distinctIpCount = Number(distinctIpResult.rows[0].count);
 
     const reportResult = await client.query(
       `SELECT COUNT(*)::int AS count
@@ -128,10 +136,10 @@ router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify
     const scanMethod = qrToken ? "QR" : "SERIAL";
     const scan = await client.query(
       `INSERT INTO scans
-       (product_instance_id, serial_entered, scan_method, status, risk_score)
-       VALUES ($1, $2, $3, $4::verification_status, $5)
+       (product_instance_id, serial_entered, scan_method, ip_hash, device_hash, status, risk_score)
+       VALUES ($1, $2, $3, $4, $5, $6::verification_status, $7)
        RETURNING id, created_at`,
-      [item.instance_id, serial, scanMethod, risk.label, risk.score]
+      [item.instance_id, serial, scanMethod, ipHash, deviceHash, risk.label, risk.score]
     );
 
     await client.query(
