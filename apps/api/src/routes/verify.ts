@@ -71,6 +71,13 @@ router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify
 
     const item = product.rows[0];
 
+    const manufacturerActive = await client.query("SELECT verification_status FROM manufacturers m JOIN products p ON p.manufacturer_id = m.id WHERE p.id = $1", [item.product_id]);
+    if (manufacturerActive.rows[0]?.verification_status !== "VERIFIED") {
+      await client.query("ROLLBACK");
+      res.status(403).json({ status: "UNKNOWN", riskScore: 50, reasons: ["The manufacturer account is not currently verified in the AuthentiCheck registry."], serial });
+      return;
+    }
+
     if (qrToken) {
       const tokenHash = createHash("sha256").update(qrToken).digest("hex");
       const qr = await client.query(
