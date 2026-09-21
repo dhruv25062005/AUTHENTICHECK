@@ -13,7 +13,12 @@ function getClientIp(req: { headers: Record<string, unknown>; ip?: string }) {
 
 router.get("/:serial", async (req, res) => {
   const serial = String(req.params.serial || "").trim().toUpperCase();
-  const qrToken = typeof req.query.token === "string" ? req.query.token.trim() : "";\n\n  if (qrToken && (qrToken.length < 32 || qrToken.length > 200)) {\n    res.status(400).json({ error: "Invalid verification credential" });\n    return;\n  }
+  const qrToken = typeof req.query.token === "string" ? req.query.token.trim() : "";
+
+  if (qrToken && (qrToken.length < 32 || qrToken.length > 200)) {
+    res.status(400).json({ error: "Invalid verification credential" });
+    return;
+  }
 
   if (!serial || serial.length > 100) {
     res.status(400).json({ error: "Invalid serial number" });
@@ -49,7 +54,7 @@ router.get("/:serial", async (req, res) => {
     if (!product.rows[0]) {
       await client.query(
         `INSERT INTO scans (serial_entered, scan_method, status, risk_score)
-         VALUES ($1, 'QR'::text, 'HIGH_RISK', 100, $2, $3)`,
+         VALUES ($1, 'SERIAL'::text, 'HIGH_RISK'::verification_status, 100)`,
         [serial]
       );
       await client.query("COMMIT");
