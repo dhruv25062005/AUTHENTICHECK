@@ -136,13 +136,14 @@ router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify
 
     await client.query(
       `INSERT INTO risk_assessments
-       (scan_id, identity_score, behavior_score, history_score, final_score, reasons, rules_version)
-       VALUES ($1, $2, $3, $4, $5, $6::jsonb, 'rules-v2')`,
+       (scan_id, identity_score, behavior_score, history_score, report_score, final_score, reasons, rules_version)
+       VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, 'rules-v3')`,
       [
         scan.rows[0].id,
         item.instance_status === "ACTIVE" ? 100 : 0,
         Math.max(0, 100 - Math.min(recentScanVelocity * 15, 100)),
         Math.max(0, 100 - Math.min(previousScans * 2, 100)),
+        Math.max(0, 100 - Math.min(Number(reportResult.rows[0].count) * 20, 100)),
         risk.score,
         JSON.stringify(risk.reasons)
       ]
