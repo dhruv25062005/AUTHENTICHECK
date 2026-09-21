@@ -72,7 +72,7 @@ router.post("/register", rateLimit({ windowMs: 15 * 60_000, max: 10, keyPrefix: 
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", rateLimit({ windowMs: 15 * 60_000, max: 20, keyPrefix: "login" }), async (req, res) => {
   const parsed = loginSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid login data" });
