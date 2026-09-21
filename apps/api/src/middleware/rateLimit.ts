@@ -4,6 +4,13 @@ type Bucket = { count: number; resetAt: number };
 
 const buckets = new Map<string, Bucket>();
 
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, bucket] of buckets) {
+    if (bucket.resetAt <= now) buckets.delete(key);
+  }
+}, 60_000).unref();
+
 export function rateLimit(options: { windowMs: number; max: number; keyPrefix: string }) {
   return (req: Request, res: Response, next: NextFunction) => {
     const now = Date.now();
