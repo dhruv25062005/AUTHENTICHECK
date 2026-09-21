@@ -2,6 +2,7 @@ import { Router } from "express";
 import { createHash } from "node:crypto";
 import { db } from "../db.js";
 import { assessRisk } from "../services/riskEngine.js";
+import { rateLimit } from "../middleware/rateLimit.js";
 
 const router = Router();
 
@@ -11,7 +12,7 @@ function getClientIp(req: { headers: Record<string, unknown>; ip?: string }) {
   return req.ip ?? null;
 }
 
-router.get("/:serial", async (req, res) => {
+router.get("/:serial", rateLimit({ windowMs: 60_000, max: 60, keyPrefix: "verify" }), async (req, res) => {
   const serial = String(req.params.serial || "").trim().toUpperCase();
   const qrToken = typeof req.query.token === "string" ? req.query.token.trim() : "";
 
