@@ -128,7 +128,7 @@ router.post("/forgot-password", rateLimit({ windowMs: 15 * 60_000, max: 10, keyP
       await db.query("UPDATE password_reset_tokens SET used_at = NOW() WHERE user_id = $1 AND used_at IS NULL", [user.rows[0].id]);
       await db.query("INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, NOW() + INTERVAL '30 minutes')", [user.rows[0].id, tokenHash]);
       if (env.NODE_ENV !== "production") {
-        console.info("Password reset token generated for development:", rawToken);
+        console.info("Password reset URL for development:", `${env.RESET_URL}?token=${rawToken}`);
       }
     }
     res.json(env.NODE_ENV === "development" && user.rows[0] && rawToken ? { message: "Development reset token generated.", resetToken: rawToken } : { message: "If an account exists for this email, recovery instructions will be sent." });
